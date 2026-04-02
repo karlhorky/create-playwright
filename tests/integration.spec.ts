@@ -175,6 +175,18 @@ test('should install with "npm i" in GHA when using npm with package-lock disabl
   expect(workflowContent).not.toContain('run: npm ci');
 });
 
+test('should not prompt and skip existing files in --quiet mode', async ({ run, dir }) => {
+  // First run: generate the project normally
+  await run([], { installGitHubActions: false, testDir: 'tests', language: 'TypeScript', installPlaywrightDependencies: false, installPlaywrightBrowsers: false });
+  const originalConfig = fs.readFileSync(path.join(dir, 'playwright.config.ts'), 'utf8');
+
+  // Second run: use --quiet, existing files should be skipped without prompting
+  await expect(run(['--quiet'], { installGitHubActions: false, testDir: 'tests', language: 'TypeScript', installPlaywrightDependencies: false, installPlaywrightBrowsers: false })).rejects.toThrowError("run again with --force");
+  
+  // Verify the existing file was not overwritten
+  expect(fs.readFileSync(path.join(dir, 'playwright.config.ts'), 'utf8')).toBe(originalConfig);
+});
+
 test('is proper yarn classic', async ({ packageManager, exec }) => {
   test.skip(packageManager !== 'yarn-classic');
   const result = await exec('yarn --version', [], { cwd: test.info().outputDir, shell: true });
