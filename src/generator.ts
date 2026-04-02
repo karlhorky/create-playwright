@@ -101,6 +101,7 @@ export class Generator {
     }
 
     const isDefinitelyTS = fs.existsSync(path.join(this.rootDir, 'tsconfig.json'));
+    const cliOptions = this.options;
 
     const questions = [
       !isDefinitelyTS && {
@@ -111,8 +112,12 @@ export class Generator {
           { name: 'TypeScript' },
           { name: 'JavaScript' },
         ],
-        initial: this.options.lang === 'js' ? 1 : 0,
-        skip: !!this.options.lang,
+        skip(this: { index: number }) {
+          if (!cliOptions.lang)
+            return false;
+          this.index = cliOptions.lang === 'js' ? 1 : 0;
+          return true;
+        },
       },
       this.options.ct && {
         type: 'select',
