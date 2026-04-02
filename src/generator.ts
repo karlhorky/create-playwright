@@ -111,7 +111,7 @@ export class Generator {
           { name: 'TypeScript' },
           { name: 'JavaScript' },
         ],
-        initial: this.options.lang === 'js' ? 'JavaScript' : 'TypeScript',
+        initial: this.options.lang === 'js' ? 1 : 0,
         skip: !!this.options.lang,
       },
       this.options.ct && {
@@ -138,8 +138,8 @@ export class Generator {
         type: 'confirm',
         name: 'installGitHubActions',
         message: 'Add a GitHub Actions workflow?',
-        initial: true,
-        skip: !!this.options.gha,
+        initial: this.options.gha ?? true,
+        skip: this.options.gha !== undefined,
       },
       {
         type: 'confirm',
