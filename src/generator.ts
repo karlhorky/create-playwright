@@ -89,7 +89,7 @@ export class Generator {
 
     const testDir = this.options.testDir || (fs.existsSync(path.join(this.rootDir, 'tests')) ? 'e2e' : 'tests');
 
-    if (this.options.quiet) {
+    if (this.options.quiet || !process.stdin.isTTY) {
       return {
         installGitHubActions: !!this.options.gha,
         language: this.options.lang === 'js' ? 'JavaScript' : 'TypeScript',
